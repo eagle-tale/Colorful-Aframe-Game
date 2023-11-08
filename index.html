@@ -2,10 +2,16 @@
 <html>
   <head>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-event-set-component@4.2.1/dist/aframe-event-set-component.min.js"></script>
   </head>
   <body>
     <a-scene>
-      <a-box position="0 0.5 -3" rotation="0 45 0" color="#4CC3D9" id="box" event-set__click></a-box>
+      <a-box position="0 0.5 -3" rotation="0 45 0" color="#4CC3D9" id="box" event-set__click=" _target: #box; visible: false"></a-box>
+      <a-camera><a-cursor></a-cursor></a-camera>
     </a-scene>
   </body>
+  
+  <script>
+    
+  </script>
 </html>
