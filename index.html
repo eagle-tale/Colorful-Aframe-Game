@@ -6,7 +6,7 @@
   </head>
   <body>
     <a-scene>
-      <a-box position="0 0.5 -3" rotation="0 45 0" color="#4CC3D9" id="box" event-set__click="_target: #box; visible: false" event-set__mouseenter="_target: #box; color:red"></a-box>
+      <a-box position="0 0.5 -3" rotation="0 45 0" color="#4CC3D9" id="box" click-listener event-set__mouseenter="_target: #box; color:red"></a-box>
       <a-camera><a-cursor></a-cursor></a-camera>
       
       <!-- 空のエンティティをオブジェクトの親として配置 -->
@@ -20,8 +20,24 @@
       var newObject = document.createElement('a-box');
       // ランダムな位置、色、サイズを設定
       newObject.setAttribute('position', {x: (Math.random() - 0.5) * 10, y: (Math.random() -5) * 10, z: (Math.random() - 0.5) * 10});
-      newObject.setAttiribute('color', '#' + Math.floor(Math.random() * 16777215).toString(16));
+      newObject.setAttribute('color', '#' + Math.floor(Math.random() * 16777215).toString(16));
+      newObject.setAttribute('click-listener', '');
       
+      //シーンにオブジェクトを追加
+      document.querySelector('#objects').appendChild(newObject);
     }
+    
+    // ゲーム開始時にオブジェクトを生成
+    for (let i = 0; i < 20; i++) {
+      createObject();
+    }
+    
+    AFRAME.registerComponent('click-listener', {
+      init: function () {
+        this.el.addEventListener('click', function (evt) {
+          this.setAttribute('visible', false);
+        });
+      }
+    });
   </script>
 </html>
