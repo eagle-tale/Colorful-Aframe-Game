@@ -19,9 +19,10 @@
       // 新しいオブジェクトを作成
       var newObject = document.createElement('a-box');
       // ランダムな位置、色、サイズを設定
-      newObject.setAttribute('position', {x: (Math.random() - 0.5) * 10, y: (Math.random() -5) * 10, z: (Math.random() - 0.5) * 10});
+      newObject.setAttribute('position', {x: (Math.random() - 0.5) * 10, y: (Math.random() - 0.5) * 10, z: (Math.random() - 0.5) * 10});
       newObject.setAttribute('color', '#' + Math.floor(Math.random() * 16777215).toString(16));
-      newObject.setAttribute('click-listener', '');
+      newObject.setAttribute('event-set__click', 'visible: false');
+      newObject.setAttribute('event-set__mouseenter', 'color:#' + Math.floor(Math.random() * 16777215).toString(16));
       
       //シーンにオブジェクトを追加
       document.querySelector('#objects').appendChild(newObject);
@@ -32,12 +33,5 @@
       createObject();
     }
     
-    AFRAME.registerComponent('click-listener', {
-      init: function () {
-        this.el.addEventListener('click', function (evt) {
-          this.setAttribute('visible', false);
-        });
-      }
-    });
   </script>
 </html>
