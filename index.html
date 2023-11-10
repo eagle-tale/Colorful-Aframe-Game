@@ -22,13 +22,45 @@
   </body>
   
   <script>
+    var score = 0;
+    var timeLeft = 60;
+    
+    //　スコア更新関数
+    function updateScore() {
+      score++;
+      document.getElemntById('score').innerText = score;
+    }
+    
+    // タイマー関数
+    function startTimer() {
+      var timerInterval = setInterval(function() {
+        timeLeft--;
+        document.getElementById('timer').innerText = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(timeInterval);
+          alert("Game Over! Your score: " + score);
+        }
+      }, 1000);
+    }
+    
+   // イベントリスナー内でスコアを更新
+      AFRAME.registerComponent('click-listener', {
+        init: function () {
+          this.el.addEventListener('click', function (evt) {
+            this.setAttribute('visible', false);
+            updateScore();
+          });
+        }
+      });
+    
     function createObject() {
       // 新しいオブジェクトを作成
       var newObject = document.createElement('a-box');
       // ランダムな位置、色、サイズを設定
       newObject.setAttribute('position', {x: (Math.random() - 0.5) * 10, y: (Math.random() - 0.5) * 10, z: (Math.random() - 0.5) * 10});
       newObject.setAttribute('color', '#' + Math.floor(Math.random() * 16777215).toString(16));
-      newObject.setAttribute('event-set__click', 'visible: false');
+      // newObject.setAttribute('event-set__click', 'visible: false');
+      newObject.setAttribute('click-listener', '');
       newObject.setAttribute('event-set__mouseenter', 'color:#' + Math.floor(Math.random() * 16777215).toString(16));
       
       //シーンにオブジェクトを追加
@@ -39,6 +71,9 @@
     for (let i = 0; i < 20; i++) {
       createObject();
     }
+    
+    // ゲーム開始時にタイマーを起動
+    startTimer();
     
   </script>
 </html>
