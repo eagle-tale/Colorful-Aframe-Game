@@ -16,36 +16,40 @@
       Time: <span id="timer">20</span>
     </div>
 
-    <script>
-      const watch = document.getElementById('watch');
-
-      function getCurrentTime() {
-        const date = new Date();
-        return date.toLocaleTimeString();
-      }
-
-      function updateClock() {
-        const currentTime = getCurrentTime();
-        watch.innerHTML = currentTime;
-      }
-
-      updateClock();
-      setInterval(updateClock, 1000);
-    </script>
-
     <a-scene>
       <a-entity id="leftHand" hand-tracking-controls="hand: left;" oculus-touch-controls="hand: left"></a-entity>
       <a-entity id="rightHand" hand-tracking-controls="hand: right;" oculus-touch-controls="hand: right"></a-entity>
       <a-sky color="#6EBAA7"></a-sky>
-      <a-box
+
+
+      <!-- <a-box
         position="0 0.5 -3"
         rotation="0 45 0"
         color="#4CC3D9"
         id="box"
         click-listener
         event-set__mouseenter="_target: #box; color:red"
-      ></a-box>
-      <a-camera><a-cursor></a-cursor></a-camera>
+      ></a-box> -->
+      <a-camera id="camera">      
+        <a-plane id="a-info-board" 
+        position="0 7 -10" width="10" height="2" color="green"
+        text__score="value: Score: 0; align:left;" 
+        text__time="value: Time: 20; align:right;" 
+        text__info="value: Game Start!!!; align:center"
+        >
+        <a-text
+        id="a-clock" 
+        align="center" 
+        baseline="top" 
+        value=""  
+        position="0 0.8 0" 
+        width=10">
+        </a-text>
+      </a-plane>
+      <a-cursor></a-cursor>
+    </a-camera>
+
+      <!-- <a-text value="Hello!!"></a-text> -->
 
       <!-- 空のエンティティをオブジェクトの親として配置 -->
       <a-entity id="objects"></a-entity>
@@ -55,11 +59,13 @@
   <script>
     var score = 0;
     var timeLeft = 20;
+    var num_box = 20;
 
     // スコア更新関数
     function updateScore() {
       score++;
       document.getElementById('score').innerText = score;
+      document.getElementById('a-info-board').setAttribute('text__score',`value: Score: ${score}`);
     }
 
     // タイマー関数
@@ -67,9 +73,16 @@
       var timerInterval = setInterval(function () {
         timeLeft--;
         document.getElementById('timer').innerText = timeLeft;
+        document.getElementById('a-info-board').setAttribute('text__time',`value: Time: ${timeLeft}`);
         if (timeLeft <= 0) {
-          clearInterval(timerInterval);
+          clearInterval(timerInterval); //タイマーの停止
+          document.getElementById('objects').innerHTML= ''; // オブジェクトの削除
+          document.getElementById('camera').setAttribute('position','0 1.6 0'); // 視点を初期位置に戻す
+          document.getElementById('camera').setAttribute('rotation','0 0.344 0'); // 視点を初期位置に戻す
+
           alert('Game Over! Your score: ' + score);
+          document.getElementById('a-info-board').setAttribute('text__info',`value: Game Over! Your score:  ${score}; color: red;`);
+          document.getElementById('a-info-board').setAttribute('animation', 'property: position; to: 0 1.6 -10; dur: 2000; easing: linear;')
         }
       }, 1000);
     }
@@ -85,6 +98,24 @@
         });
       },
     });
+
+// 時計機能
+      const watch = document.getElementById('watch');
+
+      function getCurrentTime() {
+        const date = new Date();
+        return date.toLocaleTimeString();
+      }
+
+      function updateClock() {
+        const currentTime = getCurrentTime();
+        watch.innerHTML = currentTime;
+        document.getElementById('a-clock').setAttribute('value',currentTime);
+      }
+
+      updateClock();
+      setInterval(updateClock, 1000);
+
 
     function createObject() {
       // 新しいオブジェクトを作成
@@ -104,12 +135,15 @@
       document.querySelector('#objects').appendChild(newObject);
     }
 
+    function initGame(){
     // ゲーム開始時にオブジェクトを生成
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < num_box; i++) {
       createObject();
     }
-
     // ゲーム開始時にタイマーを起動
     startTimer();
+  }
+
+  initGame();
   </script>
 </html>
