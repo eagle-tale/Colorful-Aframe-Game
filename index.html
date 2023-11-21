@@ -57,9 +57,11 @@
   </body>
 
   <script>
-    var score = 0;
-    var timeLeft = 20;
-    var num_box = 20;
+    const GAMETIME = 20;
+    const NUMBOX = 20;
+    var score;
+    var timeLeft;
+    var num_box;
 
     // スコア更新関数
     function updateScore() {
@@ -81,7 +83,7 @@
           document.getElementById('camera').setAttribute('position','0 1.6 0'); // 視点を初期位置に戻す
           document.getElementById('camera').setAttribute('rotation','0 0.344 0'); // 視点を初期位置に戻す
 
-          // alert('Game Over! Your score: ' + score);
+          // info boardの動き
           document.getElementById('a-info-board').setAttribute('text__info',`value: Game Over! Your score:  ${score}; color: red;`);
           document.getElementById('a-info-board').setAttribute('animation', 'property: position; to: 0 1.6 -10; dur: 2000; easing: linear;')
         }
@@ -137,6 +139,14 @@
     }
 
     function initGame(){
+    // 変数初期化
+    score = 0;
+    timeLeft = GAMETIME;
+    num_box = NUMBOX;
+
+    // info board 位置初期化
+    document.getElementById('a-info-board').setAttribute('animation', 'property: position; to: 0 7 -10; dur: 2000; easing: linear;')
+
     // ゲーム開始時にオブジェクトを生成
     for (let i = 0; i < num_box; i++) {
       createObject();
