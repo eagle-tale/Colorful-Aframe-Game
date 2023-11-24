@@ -5,6 +5,10 @@
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <!-- Event set コンポーネント -->
     <script src="https://unpkg.com/aframe-event-set-component@4.2.1/dist/aframe-event-set-component.min.js"></script>
+    <!-- Cannon Driver -->
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-physics-system@v4.2.2/dist/aframe-physics-system.min.js"></script>
+    <!-- aframe-particle-system-component -->
+    <script src="https://unpkg.com/aframe-particle-system-component@1.0.x/dist/aframe-particle-system-component.min.js"></script>
   </head>
   <body>
     <div style="position: fixed; top: 10px; left: 10px; color: white; z-index: 100">
@@ -18,7 +22,16 @@
       Time: <span id="timer">20</span>
     </div>
 
-    <a-scene>
+    <!--  -->
+    <script>
+      // document全体で右クリックを禁止する
+      document.oncontextmenu = () => false;
+
+      // document全体でテキストの選択を禁止する
+      document.onselectstart = () => false;
+    </script>
+
+    <a-scene physics="debug: true;">
       <a-entity id="leftHand" hand-tracking-controls="hand: left;" oculus-touch-controls="hand: left"></a-entity>
       <a-entity id="rightHand" hand-tracking-controls="hand: right;" oculus-touch-controls="hand: right"></a-entity>
       <a-sky src="/assets/kris-guico-rsB-he-ye7w-unsplash.jpg"></a-sky>
@@ -30,7 +43,6 @@
         click-listener
         event-set__mouseenter="_target: #box; color:red"
       ></a-box> -->
-
       <a-camera id="camera">
         <a-plane
           id="a-info-board"
@@ -140,11 +152,72 @@
       newObject.setAttribute('color', '#' + Math.floor(Math.random() * 16777215).toString(16));
       // newObject.setAttribute('event-set__click', 'visible: false');
       newObject.setAttribute('click-listener', '');
+      newObject.setAttribute('static-body', ''); //位置は固定され、衝突した物体に影響を与えます。
       newObject.setAttribute('event-set__mouseenter', 'color:#' + Math.floor(Math.random() * 16777215).toString(16));
+      // collideイベントを登録する
+      newObject.addEventListener('collide', function (e) {
+        console.log(e);
+        // ボール(id="ball")と衝突した場合のみ処理を行う
+        if (e.detail.body.el.id === 'ball') {
+          // 衝突したボールと同じ位置にパーティクルを発生させる
+          var effect = document.createElement('a-entity');
+          var position = e.detail.body.el.getAttribute('position');
+          console.log(position);
+          effect.setAttribute('position', position);
+          console.log(effect);
+          // パーティクルを<a-scene>に追加する
+          var scene = document.querySelector('a-scene');
+          scene.appendChild(effect);
+        }
+      });
 
       //シーンにオブジェクトを追加
       document.querySelector('#objects').appendChild(newObject);
     }
+
+    function shot() {
+      // 初期化
+      if (document.getElementById('ball')) {
+        document.getElementById('ball').remove();
+      }
+
+      // カメラの位置と向きを取得する
+      var camera = document.getElementById('camera');
+      var rotation = camera.getAttribute('rotation');
+      var position = camera.getAttribute('position');
+      console.log(rotation, position);
+
+      // カメラ前方方向に速さを掛けて、速度ベクトルを求める
+      var velocity = new THREE.Vector3();
+      var speed = 50;
+      velocity.x = Math.sin((rotation.y * Math.PI) / 180) * Math.cos((rotation.x * Math.PI) / 180) * -speed;
+      velocity.y = Math.sin((rotation.x * Math.PI) / 180) * speed;
+      velocity.z = Math.cos((rotation.y * Math.PI) / 180) * Math.cos((rotation.x * Math.PI) / 180) * -speed;
+      console.log(velocity);
+
+      // <a-entity>を新規作成して速度を与える
+      var ball = document.createElement('a-entity');
+      ball.setAttribute('id', 'ball');
+      ball.setAttribute('velocity', velocity);
+      ball.setAttribute('position', position);
+      ball.setAttribute('geometry', 'primitive: sphere; radius: 0.5');
+      ball.setAttribute('dynamic-body', 'mass: 1');
+
+      // <a-scene>に追加する
+      var scene = document.querySelector('a-scene');
+      scene.appendChild(ball);
+
+      console.log('shoted');
+    }
+    var scene = document.querySelector('a-scene');
+    // keydownイベントでスペースキーが押されたときに　ボールを発射する処理を呼び出す
+    document.addEventListener('keydown', function (event) {
+      if (event.keyCode === 32) {
+        shot();
+        // スペースキーが押されたときの処理
+        console.log('スペースキーが押されました！');
+      }
+    });
 
     function initGame() {
       // 変数初期化
@@ -164,7 +237,7 @@
       // ゲーム開始時にタイマーを起動
       startTimer();
     }
-
-    initGame();
+    // DOMのloadが終わってから処理する
+    document.addEventListener('DOMContentLoaded', initGame());
   </script>
 </html>
