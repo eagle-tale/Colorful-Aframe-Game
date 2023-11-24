@@ -21,7 +21,7 @@
     <a-scene>
       <a-entity id="leftHand" hand-tracking-controls="hand: left;" oculus-touch-controls="hand: left"></a-entity>
       <a-entity id="rightHand" hand-tracking-controls="hand: right;" oculus-touch-controls="hand: right"></a-entity>
-      <a-sky src="/assets/kris-guico-rsB-he-ye7w-unsplash_s.jpg"></a-sky>
+      <a-sky src="/assets/kris-guico-rsB-he-ye7w-unsplash.jpg"></a-sky>
       <!-- <a-box
         position="0 0.5 -3"
         rotation="0 45 0"
@@ -54,6 +54,7 @@
         </a-text> -->
         </a-plane>
         <a-cursor></a-cursor>
+        <a-entity collider-check raycaster="objects: .collidable; showLine:true;" cursor></a-entity>
       </a-camera>
       <!-- 空のエンティティをオブジェクトの親として配置 -->
       <a-entity id="objects"></a-entity>
